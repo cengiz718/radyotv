@@ -33,7 +33,7 @@ import { isFamilySafeTurkishContent } from '../data/contentSafety.ts';
 import { buildChannelEpgGuide } from '../data/turkishEpg.ts';
 import { TURKSAT_TV_CHANNELS } from '../data/tvChannels.ts';
 import type { ChannelEpgGuide, TvCategory, TvChannel } from '../types.ts';
-import { CengizBrandEmblem, ChannelBadgeIcon, ProgramTypeIcon } from './ChannelIcons.tsx';
+import { CengizBrandEmblem, ChannelLogo, ProgramTypeIcon } from './ChannelIcons.tsx';
 import { MatchSchedulePanel } from './MatchSchedulePanel.tsx';
 import { TvChannelListModal } from './TvChannelListModal.tsx';
 import { VoiceSearchButton } from './VoiceSearchButton.tsx';
