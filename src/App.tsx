@@ -282,20 +282,16 @@ export default function App() {
 
   // Uygulama her açıldığında günün ayet ve hadisini getir; metin uzunluğuna göre popup süresi belirle.
   useEffect(() => {
-    if (!settings.enableDailyWisdomPopup) {
-      setDailyWisdomPopup(null);
-      return;
-    }
+    if (!settings.enableDailyWisdomPopup) return;
     let cancelled = false;
-    const controller = new AbortController();
-    fetch('/api/daily-wisdom', { signal: controller.signal, cache: 'no-store' })
+    fetch('/api/daily-wisdom')
       .then((response) => (response.ok ? response.json() : null))
       .then((data: import('./types.ts').DailyWisdomData | null) => {
         if (!cancelled && data?.ayah?.turkish && data?.hadith?.text) setDailyWisdomPopup(data);
       })
       .catch(() => {});
-    return () => { cancelled = true; controller.abort(); };
-  }, [settings.enableDailyWisdomPopup]);
+    return () => { cancelled = true; };
+  }, []);
 
   useEffect(() => {
     if (!dailyWisdomPopup) return;
