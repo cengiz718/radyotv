@@ -350,7 +350,7 @@ export default function App() {
       .catch(() => {});
   }, [settings.cityName, settings.districtId, settings.districtName]);
 
-  // Monitor Istanbul prayer times and trigger gentle alarm once per prayer per day
+  // Monitor Türkiye local prayer times and trigger the alarm once per prayer per day
   useEffect(() => {
     if (!settings.enablePrayerAlarm || !prayerTimes?.timings) return;
 
@@ -767,7 +767,7 @@ export default function App() {
 
       const activeIdx = cardRefs.current.findIndex((el) => el === document.activeElement);
       // Mi Box'ta ilk yön tuşu da listeye odaklansın; kullanıcı önce fare/ekran dokunuşu yapmak zorunda kalmasın.
-      if (activeIdx === -1 && (e.key === 'ArrowDown' || e.key === 'ArrowRight')) {
+      if (activeIdx === -1 && ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {
         const firstCard = cardRefs.current.find((el) => el && !el.disabled);
         if (firstCard) { e.preventDefault(); firstCard.focus(); firstCard.scrollIntoView({ block: 'nearest' }); return; }
       }
