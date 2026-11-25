@@ -1,0 +1,55 @@
+name: Build APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Build APK
+        env:
+          SERVER_URL: ${{ vars.SERVER_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SERVER_URL:-}" ]; then
+            echo "UYARI: SERVER_URL tanımlı değil. Geçici adres kullanılıyor."
+            SERVER_URL="https://sunucu-adresi-ayarlanmadi.invalid/"
+          fi
+          case "$SERVER_URL" in https://*) ;; *) echo "HATA: SERVER_URL https:// ile başlamalı"; exit 1;; esac
+
+          BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
+          PLAT=$(ls -d "$ANDROID_HOME"/platforms/android-* | sort -V | tail -1)
+          JAR="$PLAT/android.jar"
+          OUT=build
+          rm -rf "$OUT" && mkdir -p "$OUT/classes" "$OUT/dex"
+
+          sed "s#__SERVER_URL__#${SERVER_URL}#g" android/src/com/radyokutu/tv/MainActivity.java > "$OUT/MainActivity.java"
+          javac --release 8 -nowarn -cp "$JAR" -d "$OUT/classes" "$OUT/MainActivity.java"
+
+          "$BT/d8" --min-api 21 --lib "$JAR" --output "$OUT/dex" $(find "$OUT/classes" -name '*.class')
+
+          "$BT/aapt2" link -o "$OUT/unsigned.apk" -I "$JAR" --manifest android/AndroidManifest.xml
+          (cd "$OUT/dex" && zip -q "../unsigned.apk" classes.dex)
+
+          keytool -genkeypair -keystore "$OUT/debug.keystore" -storepass radyokutu -keypass radyokutu \
+            -alias radyokutu -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Radyo Kutu" >/dev/null 2>&1
+          "$BT/apksigner" sign --ks "$OUT/debug.keystore" --ks-pass pass:radyokutu \
+            --ks-key-alias radyokutu --key-pass pass:radyokutu --out "$OUT/RadyoKutu.apk" "$OUT/unsigned.apk"
+
+          "$BT/apksigner" verify "$OUT/RadyoKutu.apk"
+          echo "APK hazır: $OUT/RadyoKutu.apk"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RadyoKutu-APK
+          path: build/RadyoKutu.apk
