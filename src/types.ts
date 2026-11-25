@@ -155,6 +155,7 @@ export interface AppSettings {
   districtId: string;
   districtName: string;
   showSpiritualStrip: boolean;
+  enableDailyWisdomPopup: boolean;
   enableVisualizer: boolean;
   enableFireplaceEmbers: boolean;
   enablePrayerAlarm: boolean;
