@@ -238,16 +238,3 @@
 .low-power.aero-ui::before,
 .low-power.aero-ui::after { display: none; }
 .low-power.aero-ui button { backdrop-filter: none; -webkit-backdrop-filter: none; }
-
-
-/* ---- Mobil dokunmatik performans düzeltmesi ---- */
-@media (hover: none) and (pointer: coarse) {
-  html, body, #root { -webkit-tap-highlight-color: transparent; }
-  .aero-ui::before, .aero-ui::after { animation: none !important; filter: blur(24px); opacity: .06; }
-  .aero-ui button, .aero-ui [role="button"], .aero-ui select, .aero-ui input, .aero-ui textarea {
-    touch-action: manipulation; -webkit-tap-highlight-color: transparent; transition: none !important;
-    backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-  }
-  .aero-ui button:active, .aero-ui [role="button"]:active { transform: none !important; filter: none !important; }
-  .aero-ui [class*="backdrop-blur"] { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
-}
