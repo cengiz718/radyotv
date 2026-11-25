@@ -83,6 +83,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   districtId: '',
   districtName: 'ADIYAMAN',
   showSpiritualStrip: true,
+  enableDailyWisdomPopup: true,
   enableVisualizer: true,
   enableFireplaceEmbers: true,
   enablePrayerAlarm: true,
@@ -258,6 +259,7 @@ export default function App() {
   const [searchModalOpen, setSearchModalOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [prayerTimes, setPrayerTimes] = useState<PrayerTimesData | null>(null);
+  const [dailyWisdomPopup, setDailyWisdomPopup] = useState<import('./types.ts').DailyWisdomData | null>(null);
   const [prayerAlert, setPrayerAlert] = useState<{
     label: string;
     time: string;
@@ -277,6 +279,27 @@ export default function App() {
     applyAppUpdate,
     checkAndUpdateNow,
   } = useAutoUpdater({ onCatalogUpdated: handleCatalogUpdated });
+
+  // Uygulama her açıldığında günün ayet ve hadisini getir; metin uzunluğuna göre popup süresi belirle.
+  useEffect(() => {
+    if (!settings.enableDailyWisdomPopup) return;
+    let cancelled = false;
+    fetch('/api/daily-wisdom')
+      .then((response) => (response.ok ? response.json() : null))
+      .then((data: import('./types.ts').DailyWisdomData | null) => {
+        if (!cancelled && data?.ayah?.turkish && data?.hadith?.text) setDailyWisdomPopup(data);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!dailyWisdomPopup) return;
+    const chars = dailyWisdomPopup.ayah.turkish.length + dailyWisdomPopup.hadith.text.length;
+    const durationMs = Math.min(26000, Math.max(9000, 6500 + chars * 42));
+    const timer = window.setTimeout(() => setDailyWisdomPopup(null), durationMs);
+    return () => window.clearTimeout(timer);
+  }, [dailyWisdomPopup]);
 
   const baseTheme =
     appView === 'tv'
@@ -1795,6 +1818,20 @@ export default function App() {
           aria-live="polite"
         >
           Kanal {numericBuffer}
+        </div>
+      )}
+
+      {dailyWisdomPopup && settings.enableDailyWisdomPopup && (
+        <div className="fixed top-3 left-1/2 -translate-x-1/2 z-[90] w-[min(92vw,620px)] rounded-2xl border border-amber-300/35 bg-slate-950/95 p-3 sm:p-4 shadow-2xl backdrop-blur-xl animate-in fade-in slide-in-from-top-2" role="status" aria-live="polite">
+          <div className="flex items-center justify-between gap-3 mb-2">
+            <div className="text-xs font-bold tracking-wide text-amber-300">✦ GÜNÜN AYETİ VE HADİSİ</div>
+            <button type="button" onClick={() => setDailyWisdomPopup(null)} className="min-h-8 min-w-8 rounded-lg text-slate-300 hover:bg-white/10" aria-label="Bilgilendirmeyi kapat">×</button>
+          </div>
+          <div className="space-y-2 text-[11px] sm:text-xs leading-relaxed text-slate-100">
+            <p><strong className="text-amber-300">AYET · {dailyWisdomPopup.ayah.reference}</strong><br />{dailyWisdomPopup.ayah.turkish}</p>
+            <div className="h-px bg-white/10" />
+            <p><strong className="text-emerald-300">HADİS · {dailyWisdomPopup.hadith.reference}</strong><br />{dailyWisdomPopup.hadith.text}</p>
+          </div>
         </div>
       )}
 
