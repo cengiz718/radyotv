@@ -77,10 +77,10 @@ const FIRED_PRAYERS_KEY = 'cengiztv_fired_prayer_alarms_v1';
 const PAGE_LIMIT = 24;
 
 const DEFAULT_SETTINGS: AppSettings = {
-  cityId: '539',
-  cityName: 'İSTANBUL',
-  districtId: '9541',
-  districtName: 'İSTANBUL',
+  cityId: '501',
+  cityName: 'ADIYAMAN',
+  districtId: '',
+  districtName: 'ADIYAMAN',
   showSpiritualStrip: true,
   enableVisualizer: true,
   enableFireplaceEmbers: true,
@@ -137,12 +137,36 @@ export default function App() {
   const [settings, setSettings] = useState<AppSettings>(() => {
     try {
       const saved = localStorage.getItem(SETTINGS_KEY);
-      if (saved) return { ...DEFAULT_SETTINGS, ...(JSON.parse(saved) as Partial<AppSettings>) };
+      if (saved) {
+        const parsed = JSON.parse(saved) as Partial<AppSettings>;
+        // Eski varsayılan İstanbul kaydını ilk açılışta Adıyaman'a taşı.
+        if (parsed.cityId === '539' && parsed.cityName === 'İSTANBUL') {
+          return { ...DEFAULT_SETTINGS, ...parsed, cityId: '501', cityName: 'ADIYAMAN', districtId: '', districtName: 'ADIYAMAN' };
+        }
+        return { ...DEFAULT_SETTINGS, ...parsed };
+      }
     } catch {
       // ignore
     }
     return DEFAULT_SETTINGS;
   });
+
+  // İlk kurulumda Adıyaman merkez ilçesinin Diyanet kimliğini API'den bul.
+  useEffect(() => {
+    if (settings.cityId !== '501' || settings.districtId) return;
+    let cancelled = false;
+    fetch('/api/prayer/districts?cityId=501')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { districts?: DiyanetDistrict[] } | null) => {
+        if (cancelled || !Array.isArray(data?.districts) || data.districts.length === 0) return;
+        const center = data.districts.find((d) => /ADIYAMAN/i.test(d.IlceAdi)) ?? data.districts[0];
+        setSettings((prev) => prev.cityId === '501' && !prev.districtId
+          ? { ...prev, districtId: center.IlceID, districtName: center.IlceAdi }
+          : prev);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [settings.cityId, settings.districtId]);
 
   const updateSettings = useCallback((patch: Partial<AppSettings>) => {
     setSettings((prev) => ({ ...prev, ...patch }));
@@ -741,6 +765,11 @@ export default function App() {
       if (immersiveMode) return;
 
       const activeIdx = cardRefs.current.findIndex((el) => el === document.activeElement);
+      // Mi Box'ta ilk yön tuşu da listeye odaklansın; kullanıcı önce fare/ekran dokunuşu yapmak zorunda kalmasın.
+      if (activeIdx === -1 && (e.key === 'ArrowDown' || e.key === 'ArrowRight')) {
+        const firstCard = cardRefs.current.find((el) => el && !el.disabled);
+        if (firstCard) { e.preventDefault(); firstCard.focus(); firstCard.scrollIntoView({ block: 'nearest' }); return; }
+      }
       if (activeIdx !== -1) {
         const cols = getColumnCount();
         let nextIdx = activeIdx;
