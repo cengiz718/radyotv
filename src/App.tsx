@@ -30,7 +30,7 @@ import { ArtistFinderView } from './components/ArtistFinderView.tsx';
 import { AudioWaveVisualizer } from './components/AudioWaveVisualizer.tsx';
 import {
   CengizBrandEmblem,
-  ChannelBadgeIcon,
+  ChannelLogo,
   ProgramTypeIcon,
 } from './components/ChannelIcons.tsx';
 import { OfflineIndicator } from './components/OfflineIndicator.tsx';
@@ -1133,7 +1133,7 @@ export default function App() {
                     {/* Station Info with Channel Badge Icon & Live Program Icon */}
                     <div className="flex items-center gap-4 sm:gap-5 min-w-0">
                       <div className="relative shrink-0">
-                        <ChannelBadgeIcon
+                        <ChannelLogo
                           name={currentStation?.name ?? 'Cengiz Radyo'}
                           kind="radio"
                           category={currentStation?.category ?? 'ilahi'}
@@ -1634,7 +1634,7 @@ export default function App() {
                               className={`w-full text-left p-4 pr-14 rounded-2xl focus-visible:outline-none focus-visible:ring-3 ${activeTheme.ringClass} focus-visible:bg-[#1E2432] min-h-[118px] flex flex-col justify-between`}
                             >
                               <div className="flex items-start gap-3">
-                                <ChannelBadgeIcon
+                                <ChannelLogo
                                   name={station.name}
                                   kind="radio"
                                   category={station.category}
