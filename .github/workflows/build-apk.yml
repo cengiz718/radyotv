@@ -26,8 +26,8 @@ jobs:
         run: |
           set -euo pipefail
           if [ -z "${SERVER_URL:-}" ]; then
-            echo "UYARI: SERVER_URL tanımlı değil. Geçici adres kullanılıyor."
-            SERVER_URL="https://sunucu-adresi-ayarlanmadi.invalid/"
+            echo "::error::GitHub Actions Variables içinde SERVER_URL tanımlı değil. Gerçek yayın adresi olmadan çalışan APK üretilemez."
+            exit 1
           fi
           case "$SERVER_URL" in https://*) ;; *) echo "HATA: SERVER_URL https:// ile başlamalı"; exit 1;; esac
 
