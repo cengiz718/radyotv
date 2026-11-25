@@ -110,3 +110,24 @@
     transition-duration: 0ms;
   }
 }
+
+/* ---- Android TV / Mi Box: kumanda tepkisini hızlandırmak için hafifletilmiş görünüm ---- */
+.low-power [class*="backdrop-blur"] {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background-color: rgba(8, 10, 14, 0.94) !important;
+}
+.low-power *,
+.low-power *::before,
+.low-power *::after {
+  transition-duration: 0ms !important;
+  transition-delay: 0ms !important;
+  scroll-behavior: auto !important;
+}
+.low-power [class*="shadow"] {
+  box-shadow: none !important;
+}
+.low-power .fixed.inset-0 img,
+.low-power .fixed.inset-0 canvas {
+  will-change: auto;
+}

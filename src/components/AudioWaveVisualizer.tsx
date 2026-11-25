@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { LOW_POWER } from '../utils/lowPower.ts';
 import type { RefObject } from 'react';
 
 interface AudioWaveVisualizerProps {
@@ -192,7 +193,7 @@ export function AudioWaveVisualizer({
         return;
       }
       // ~30fps cap to save CPU & battery on mobile and Android TV Box
-      if (now - lastDraw >= 32) {
+      if (now - lastDraw >= (LOW_POWER ? 80 : 32)) {
         lastDraw = now;
         drawFrame();
       }

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { LOW_POWER } from '../utils/lowPower.ts';
 import { FIREPLACE_SCENE, LANDSCAPE_SCENES } from '../data/stations.ts';
 import type { BackgroundMode, LandscapeItem } from '../types.ts';
 
@@ -117,7 +118,7 @@ export function AmbientBackdrop({
     };
 
     const tick = (now: number) => {
-      if (document.hidden) {
+      if (document.hidden || LOW_POWER) {
         rafId = window.requestAnimationFrame(tick);
         return;
       }
