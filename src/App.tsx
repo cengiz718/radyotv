@@ -834,7 +834,7 @@ export default function App() {
 
   return (
     <div
-      className="min-h-screen relative text-[#F4F5F7] flex flex-col palette-smooth"
+      className="aero-ui min-h-screen relative isolate text-[#F4F5F7] flex flex-col palette-smooth"
       style={
         {
           backgroundColor: activeSurface.pageBg,
