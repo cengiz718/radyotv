@@ -57,6 +57,7 @@ import type {
   AppSettings,
   AppView,
   BackgroundMode,
+  DiyanetDistrict,
   FilterTab,
   LandscapeItem,
   LandscapesResponse,
