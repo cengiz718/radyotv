@@ -405,6 +405,12 @@ export function SettingsModal({
               )}
             </div>
 
+            <div className="pt-2 border-t border-white/8">
+              <button type="button" onClick={() => onUpdateSettings({ enableDailyWisdomPopup: !settings.enableDailyWisdomPopup })} className={`min-h-[44px] w-full px-4 rounded-xl border text-sm font-medium flex items-center justify-between ${settings.enableDailyWisdomPopup ? 'bg-amber-500/15 border-amber-400 text-amber-200' : 'bg-[#161B24] border-white/12 text-[#D1D5DB]'}`}>
+                <span>Uygulama Açılışında Ayet &amp; Hadis Popup’ı</span>
+                <span className="font-mono text-xs">{settings.enableDailyWisdomPopup ? 'AÇIK' : 'KAPALI'}</span>
+              </button>
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-2">
               <button
                 type="button"
