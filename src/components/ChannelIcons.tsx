@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   BookOpen,
   Clapperboard,
@@ -341,6 +342,90 @@ export function ChannelBadgeIcon({
       >
         {spec.shortCode}
       </span>
+    </div>
+  );
+}
+
+
+// Resmi kanal alan adlarından logo/favikon yükler; erişilemeyen logoda tasarımlı rozet kullanır.
+const CHANNEL_LOGO_DOMAINS: Array<{ match: string; domain: string }> = [
+  { match: 'kanal d', domain: 'kanald.com.tr' },
+  { match: 'star tv', domain: 'startv.com.tr' },
+  { match: 'tv8', domain: 'tv8.com.tr' },
+  { match: 'show tv', domain: 'showtv.com.tr' },
+  { match: 'atv', domain: 'atv.com.tr' },
+  { match: 'now', domain: 'nowtv.com.tr' },
+  { match: 'trt haber', domain: 'trthaber.com' },
+  { match: 'trt türk', domain: 'trtturk.com.tr' },
+  { match: 'trt müzik', domain: 'trtmuzik.net.tr' },
+  { match: 'trt 1', domain: 'trt1.com.tr' },
+  { match: 'trt 2', domain: 'trt2.com.tr' },
+  { match: 'trt spor yıldız', domain: 'trtspor.com.tr' },
+  { match: 'trt spor', domain: 'trtspor.com.tr' },
+  { match: 'diyanet', domain: 'diyanet.tv' },
+  { match: 'ntv', domain: 'ntv.com.tr' },
+  { match: 'habertürk', domain: 'haberturk.com' },
+  { match: 'halk tv', domain: 'halktv.com.tr' },
+  { match: 'a haber', domain: 'ahaber.com.tr' },
+  { match: 'a spor', domain: 'aspor.com.tr' },
+  { match: 'cnbc', domain: 'cnbce.com' },
+  { match: 'bloomberg', domain: 'bloomberght.com' },
+  { match: 'tgrt', domain: 'tgrthaber.com' },
+  { match: 'kanal 7', domain: 'kanal7.com' },
+  { match: '360 tv', domain: 'tv360.com.tr' },
+  { match: '24 tv', domain: 'tv24.com.tr' },
+  { match: 'fb tv', domain: 'fenerbahce.org' },
+  { match: 'kral', domain: 'kralmuzik.com.tr' },
+  { match: 'akra', domain: 'akradyo.com.tr' },
+  { match: 'lalegül', domain: 'lalegul.com.tr' },
+  { match: 'lalegul', domain: 'lalegul.com.tr' },
+  { match: 'trt fm', domain: 'trtfm.net' },
+  { match: 'trt türkü', domain: 'trtturku.net' },
+  { match: 'süper fm', domain: 'superfm.com.tr' },
+  { match: 'joy türk', domain: 'joyturk.com' },
+  { match: 'slow türk', domain: 'slowturk.com.tr' },
+  { match: 'kafa radyo', domain: 'kafaradyo.com' },
+  { match: 'radyo fenomen', domain: 'radyofenomen.com' },
+  { match: 'ntv radyo', domain: 'ntvradyo.com.tr' },
+];
+
+export function ChannelLogo({
+  name,
+  kind,
+  category,
+  size = 'md',
+}: {
+  name: string;
+  kind: 'tv' | 'radio';
+  category?: TvCategory | StationCategory;
+  size?: 'sm' | 'md' | 'lg';
+}) {
+  const [failed, setFailed] = useState(false);
+  const normalized = name.toLocaleLowerCase('tr-TR');
+  const match = CHANNEL_LOGO_DOMAINS.find((item) => normalized.includes(item.match));
+  const logoUrl = match
+    ? `https://www.google.com/s2/favicons?domain_url=${encodeURIComponent(`https://${match.domain}`)}&sz=128`
+    : null;
+  const dimensions = size === 'lg' ? 'w-14 h-14 rounded-2xl' : size === 'sm' ? 'w-9 h-9 rounded-lg' : 'w-11 h-11 rounded-xl';
+
+  if (!logoUrl || failed) {
+    return <ChannelBadgeIcon name={name} kind={kind} category={category} size={size} />;
+  }
+
+  return (
+    <div
+      className={`${dimensions} shrink-0 flex items-center justify-center overflow-hidden border border-white/15 bg-white rounded-xl shadow-lg shadow-black/20 p-1.5`}
+      title={`${name} kanal logosu`}
+    >
+      <img
+        src={logoUrl}
+        alt={`${name} logosu`}
+        loading="lazy"
+        decoding="async"
+        referrerPolicy="no-referrer"
+        className="w-full h-full object-contain"
+        onError={() => setFailed(true)}
+      />
     </div>
   );
 }
