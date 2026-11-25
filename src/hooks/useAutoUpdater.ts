@@ -20,6 +20,8 @@ export function useAutoUpdater({ onCatalogUpdated }: UseAutoUpdaterOptions = {})
     onRegisteredSW(_swUrl, registration) {
       if (registration) {
         swRegistrationRef.current = registration;
+        // İlk açılışta güncellemeyi hemen kontrol et; autoUpdate yeni sürümü etkinleştirir.
+        registration.update().catch(() => {});
       }
     },
   });
