@@ -1068,7 +1068,7 @@ export function TvPlayerView({
                   return (
                     <div className="space-y-2.5 sm:space-y-3">
                       <div className="flex items-center gap-3 sm:gap-3.5 min-w-0">
-                        <ChannelBadgeIcon
+                        <ChannelLogo
                           name={zapBanner.channel.name}
                           kind="tv"
                           category={zapBanner.channel.category}
@@ -1141,7 +1141,7 @@ export function TvPlayerView({
               <div className="rounded-xl bg-white/[0.04] border border-white/10 p-3 space-y-2">
                 <div className="flex items-center justify-between gap-2.5">
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <ChannelBadgeIcon
+                    <ChannelLogo
                       name={activeChannel?.name || 'Cengiz TV'}
                       kind="tv"
                       category={activeChannel?.category || 'ulusal'}
@@ -1755,7 +1755,7 @@ export function TvPlayerView({
         {/* TV Player Controls Bar with Channel Badge + Current EPG Program */}
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5 min-w-0">
-            <ChannelBadgeIcon
+            <ChannelLogo
               name={activeChannel?.name || 'Cengiz TV'}
               kind="tv"
               category={activeChannel?.category || 'ulusal'}
@@ -2102,7 +2102,7 @@ export function TvPlayerView({
                 >
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3 min-w-0">
-                      <ChannelBadgeIcon name={ch.name} kind="tv" category={ch.category} size="md" />
+                      <ChannelLogo name={ch.name} kind="tv" category={ch.category} size="md" />
                       <div className="min-w-0">
                         <h4 className="text-base font-bold text-white truncate">{ch.name}</h4>
                         <p className="text-xs text-[#9BA1AE]">
@@ -2179,7 +2179,7 @@ export function TvPlayerView({
                           : 'bg-[#0D0F12]/90 border-white/10 text-[#E5E7EB] hover:border-teal-400/60 hover:text-white'
                       }`}
                     >
-                      <ChannelBadgeIcon name={rc.name} kind="tv" category={rc.category} size="sm" />
+                      <ChannelLogo name={rc.name} kind="tv" category={rc.category} size="sm" />
                       <span>{rc.name}</span>
                     </button>
                   );
@@ -2312,7 +2312,7 @@ export function TvPlayerView({
                   style={!isSelected ? { backgroundColor: surfaceCardBg } : undefined}
                 >
                   <div className="flex items-start gap-3">
-                    <ChannelBadgeIcon name={ch.name} kind="tv" category={ch.category} size="md" />
+                    <ChannelLogo name={ch.name} kind="tv" category={ch.category} size="md" />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 text-[11px] text-[#9BA1AE]">
                         <span className="font-mono tabular-nums text-[#8C93A3]">
