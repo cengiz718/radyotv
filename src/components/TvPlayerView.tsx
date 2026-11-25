@@ -719,6 +719,16 @@ export function TvPlayerView({
       }
 
       const activeIdx = cardRefs.current.findIndex((el) => el === document.activeElement);
+      // Mi Box kumandasında ilk yön tuşu da kanal listesini odaklasın.
+      if (activeIdx === -1 && ['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(e.key)) {
+        const firstChannel = cardRefs.current.find((el) => el && !el.disabled);
+        if (firstChannel) {
+          e.preventDefault();
+          firstChannel.focus();
+          firstChannel.scrollIntoView({ block: 'nearest' });
+          return;
+        }
+      }
       if (activeIdx !== -1) {
         const cols = getColumnCount();
         let nextIdx = activeIdx;
