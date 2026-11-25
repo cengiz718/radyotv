@@ -1,6 +1,7 @@
 package com.radyokutu.tv;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Window;
 import android.webkit.WebSettings;
@@ -51,8 +52,14 @@ public class MainActivity extends Activity {
     public void onBackPressed() {
         if (webView != null && webView.canGoBack()) {
             webView.goBack();
-        } else {
-            super.onBackPressed();
+            return;
         }
+        new AlertDialog.Builder(this)
+            .setTitle("Uygulamadan çıkılsın mı?")
+            .setMessage("Cengiz TV & Radyo kapatılsın mı?")
+            .setPositiveButton("Evet", (dialog, which) -> finish())
+            .setNegativeButton("Hayır", (dialog, which) -> dialog.dismiss())
+            .setCancelable(true)
+            .show();
     }
 }
