@@ -131,3 +131,110 @@
 .low-power .fixed.inset-0 canvas {
   will-change: auto;
 }
+
+
+/* ---- Aero glass: dynamic, readable and remote-friendly interface ---- */
+.aero-ui {
+  --aero-line: rgba(255,255,255,.16);
+  --aero-glass: rgba(18,24,36,.58);
+  --aero-glass-strong: rgba(12,17,27,.82);
+  background:
+    radial-gradient(ellipse at 12% 4%, rgba(56,189,248,.15), transparent 34%),
+    radial-gradient(ellipse at 88% 18%, rgba(139,92,246,.14), transparent 32%),
+    linear-gradient(145deg, #080d17 0%, #101827 48%, #0b101b 100%);
+}
+.aero-ui::before,
+.aero-ui::after {
+  content: "";
+  position: fixed;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: 9999px;
+  filter: blur(70px);
+  opacity: .22;
+  transform: translate3d(0,0,0);
+  animation: aero-float 22s ease-in-out infinite alternate;
+}
+.aero-ui::before {
+  width: 34vw;
+  height: 34vw;
+  min-width: 220px;
+  min-height: 220px;
+  top: 8%;
+  left: -12%;
+  background: radial-gradient(circle, rgba(56,189,248,.42), transparent 68%);
+}
+.aero-ui::after {
+  width: 30vw;
+  height: 30vw;
+  min-width: 200px;
+  min-height: 200px;
+  right: -10%;
+  bottom: 4%;
+  background: radial-gradient(circle, rgba(168,85,247,.34), transparent 68%);
+  animation-delay: -9s;
+}
+.aero-ui > * {
+  position: relative;
+  z-index: 1;
+}
+.aero-ui button,
+.aero-ui select,
+.aero-ui input,
+.aero-ui [role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 180ms cubic-bezier(.2,.8,.2,1),
+    border-color 180ms ease,
+    background-color 180ms ease,
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+.aero-ui button {
+  backdrop-filter: blur(12px) saturate(135%);
+  -webkit-backdrop-filter: blur(12px) saturate(135%);
+}
+.aero-ui button:hover:not(:disabled) {
+  filter: brightness(1.1);
+  border-color: rgba(186,230,253,.42);
+}
+.aero-ui button:active:not(:disabled) {
+  transform: scale(.975);
+}
+.aero-ui button:focus-visible,
+.aero-ui select:focus-visible,
+.aero-ui input:focus-visible {
+  outline: 2px solid rgba(125,211,252,.9);
+  outline-offset: 3px;
+  box-shadow: 0 0 0 5px rgba(56,189,248,.16);
+}
+.aero-ui [class*="rounded-2xl"][class*="border"],
+.aero-ui [class*="rounded-xl"][class*="border"] {
+  border-color: var(--aero-line);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.055), 0 12px 32px rgba(0,0,0,.16);
+}
+.aero-ui .bg-black\/75,
+.aero-ui .bg-\[\#0D0F12\],
+.aero-ui .bg-\[\#141820\]\/94,
+.aero-ui .bg-\[\#161B24\] {
+  background-color: var(--aero-glass) !important;
+}
+.aero-ui .bg-black\/75,
+.aero-ui .bg-\[\#141820\]\/94 {
+  background-color: var(--aero-glass-strong) !important;
+}
+@keyframes aero-float {
+  0% { transform: translate3d(0,0,0) scale(.96); }
+  50% { transform: translate3d(5vw,3vh,0) scale(1.05); }
+  100% { transform: translate3d(-2vw,7vh,0) scale(1); }
+}
+@media (max-width: 700px) {
+  .aero-ui::before, .aero-ui::after { filter: blur(48px); opacity: .15; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aero-ui::before, .aero-ui::after { animation: none; }
+  .aero-ui button, .aero-ui select, .aero-ui input { transition: none; }
+}
+.low-power.aero-ui::before,
+.low-power.aero-ui::after { display: none; }
+.low-power.aero-ui button { backdrop-filter: none; -webkit-backdrop-filter: none; }
