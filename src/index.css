@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: #0d0f12;
+    color: #f4f5f7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+}
+
+@keyframes eq-bar-1 {
+  0%, 100% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+}
+
+@keyframes eq-bar-2 {
+  0%, 100% { transform: scaleY(0.85); }
+  50% { transform: scaleY(0.25); }
+}
+
+@keyframes eq-bar-3 {
+  0%, 100% { transform: scaleY(0.45); }
+  50% { transform: scaleY(0.95); }
+}
+
+.eq-bar-1 {
+  transform-origin: bottom;
+  animation: eq-bar-1 0.85s ease-in-out infinite;
+}
+
+.eq-bar-2 {
+  transform-origin: bottom;
+  animation: eq-bar-2 0.7s ease-in-out infinite;
+}
+
+.eq-bar-3 {
+  transform-origin: bottom;
+  animation: eq-bar-3 0.95s ease-in-out infinite;
+}
+
+@keyframes palette-crossfade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes palette-crossfade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes palette-accent-glow {
+  0% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.palette-crossfade-in {
+  animation: palette-crossfade-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity, transform;
+}
+
+.palette-crossfade-out {
+  animation: palette-crossfade-out 0.65s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  will-change: opacity;
+}
+
+.palette-smooth {
+  transition-property: color, background-color, border-color, box-shadow, fill, stroke;
+  transition-duration: 500ms;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.palette-badge-swap {
+  animation: palette-accent-glow 0.5s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eq-bar-1, .eq-bar-2, .eq-bar-3, .palette-crossfade-in, .palette-crossfade-out, .palette-badge-swap {
+    animation: none;
+  }
+  .palette-smooth {
+    transition-duration: 0ms;
+  }
+}
