@@ -238,3 +238,5 @@
 .low-power.aero-ui::before,
 .low-power.aero-ui::after { display: none; }
 .low-power.aero-ui button { backdrop-filter: none; -webkit-backdrop-filter: none; }
+
+/* Android TV / Mi Box + mobile release 2.5.0 */
