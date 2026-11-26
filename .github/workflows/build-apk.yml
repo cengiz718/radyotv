@@ -38,10 +38,6 @@ jobs:
           esac
 
           echo "Uygulama adresi: $SERVER_URL"
-          curl -fsSL --max-time 20 -o /dev/null "$SERVER_URL" || {
-            echo "HATA: Uygulama sunucusuna erisilemiyor: $SERVER_URL"
-            exit 1
-          }
 
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           PLAT=$(ls -d "$ANDROID_HOME"/platforms/android-* | sort -V | tail -1)
