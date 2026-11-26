@@ -20,16 +20,28 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Build APK
+      - name: Build APK for phone and Android TV / Mi Box
         env:
           SERVER_URL: ${{ vars.SERVER_URL }}
         run: |
           set -euo pipefail
+
+          # Son kullanici APK'si bos/gecersiz bir sunucu adresiyle uretilmesin.
+          # SERVER_URL tanimli degilse mevcut canli web uygulamasi kullanilir.
           if [ -z "${SERVER_URL:-}" ]; then
-            echo "UYARI: SERVER_URL tanımlı değil. Geçici adres kullanılıyor."
-            SERVER_URL="https://sunucu-adresi-ayarlanmadi.invalid/"
+            SERVER_URL="https://remix-untitled-9007.ai.studio/"
           fi
-          case "$SERVER_URL" in https://*) ;; *) echo "HATA: SERVER_URL https:// ile başlamalı"; exit 1;; esac
+
+          case "$SERVER_URL" in
+            https://*) ;;
+            *) echo "HATA: SERVER_URL https:// ile baslamali"; exit 1 ;;
+          esac
+
+          echo "Uygulama adresi: $SERVER_URL"
+          curl -fsSL --max-time 20 -o /dev/null "$SERVER_URL" || {
+            echo "HATA: Uygulama sunucusuna erisilemiyor: $SERVER_URL"
+            exit 1
+          }
 
           BT=$(ls -d "$ANDROID_HOME"/build-tools/* | sort -V | tail -1)
           PLAT=$(ls -d "$ANDROID_HOME"/platforms/android-* | sort -V | tail -1)
@@ -37,7 +49,7 @@ jobs:
           OUT=build
           rm -rf "$OUT" && mkdir -p "$OUT/classes" "$OUT/dex"
 
-          sed "s#__SERVER_URL__#${SERVER_URL}#g" android/src/com/radyokutu/tv/MainActivity.java > "$OUT/MainActivity.java"
+          sed "s#__SERVER_URL__#$SERVER_URL#g" android/src/com/radyokutu/tv/MainActivity.java > "$OUT/MainActivity.java"
           javac --release 8 -nowarn -cp "$JAR" -d "$OUT/classes" "$OUT/MainActivity.java"
 
           "$BT/d8" --min-api 21 --lib "$JAR" --output "$OUT/dex" $(find "$OUT/classes" -name '*.class')
@@ -46,17 +58,18 @@ jobs:
           (cd "$OUT/dex" && zip -q "../unsigned.apk" classes.dex)
 
           keytool -genkeypair -keystore "$OUT/debug.keystore" -storepass radyokutu -keypass radyokutu \
-            -alias radyokutu -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Radyo Kutu" >/dev/null 2>&1
-          "$BT/apksigner" sign --ks "$OUT/debug.keystore" --ks-pass pass:radyokutu \
-            --ks-key-alias radyokutu --key-pass pass:radyokutu --out "$OUT/RadyoKutu.apk" "$OUT/unsigned.apk"
+            -alias radyokutu -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Cengiz TV Radyo" >/dev/null 2>&1
 
-          "$BT/apksigner" verify "$OUT/RadyoKutu.apk"
-          echo "APK hazır: $OUT/RadyoKutu.apk"
+          "$BT/apksigner" sign --ks "$OUT/debug.keystore" --ks-pass pass:radyokutu \
+            --ks-key-alias radyokutu --key-pass pass:radyokutu --out "$OUT/CengizTV-Radyo.apk" "$OUT/unsigned.apk"
+
+          "$BT/apksigner" verify "$OUT/CengizTV-Radyo.apk"
+          echo "APK hazir: $OUT/CengizTV-Radyo.apk"
 
       - uses: actions/upload-artifact@v4
         with:
-          name: RadyoKutu-APK
-          path: build/RadyoKutu.apk
+          name: CengizTV-Radyo-APK
+          path: build/CengizTV-Radyo.apk
 
       - name: Keep only the latest two APK artifacts
         uses: actions/github-script@v7
@@ -66,7 +79,7 @@ jobs:
             const repo = context.repo.repo;
             const response = await github.rest.actions.listArtifactsForRepo({ owner, repo, per_page: 100 });
             const apks = response.data.artifacts
-              .filter((artifact) => artifact.name === 'RadyoKutu-APK' && !artifact.expired)
+              .filter((artifact) => artifact.name === 'CengizTV-Radyo-APK' && !artifact.expired)
               .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             for (const artifact of apks.slice(2)) {
               await github.rest.actions.deleteArtifact({ owner, repo, artifact_id: artifact.id });
